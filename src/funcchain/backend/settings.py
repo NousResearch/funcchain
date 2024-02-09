@@ -25,11 +25,12 @@ class FuncchainSettings(BaseSettings):
     retry_parse: int = 3
     retry_parse_sleep: float = 0.1
 
-    # KEYS
+    # KEYS / URLS
     openai_api_key: Optional[str] = None
     azure_api_key: Optional[str] = None
     anthropic_api_key: Optional[str] = None
     google_api_key: Optional[str] = None
+    ollama_base_url: str = "http://localhost:11434"
 
     # MODEL KWARGS
     verbose: bool = False
@@ -41,7 +42,6 @@ class FuncchainSettings(BaseSettings):
     context_lenght: int = 8196
     n_gpu_layers: int = 50
     keep_loaded: bool = False
-    repeat_penalty: float = 1.0
     local_models_path: str = "./.models"
 
     def model_kwargs(self) -> dict:
@@ -58,14 +58,15 @@ class FuncchainSettings(BaseSettings):
         }
 
     def ollama_kwargs(self) -> dict:
-        return {}
+        return {
+            "base_url": self.ollama_base_url
+        }
 
     def llamacpp_kwargs(self) -> dict:
         return {
             "n_ctx": self.context_lenght,
             "use_mlock": self.keep_loaded,
             "n_gpu_layers": self.n_gpu_layers,
-            "repeat_penalty": self.repeat_penalty,
         }
 
 
